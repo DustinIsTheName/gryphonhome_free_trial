@@ -48,9 +48,22 @@ class OrderController < ApplicationController
     def loop_orders(orders)
       for order in orders
         unless order.id == params["id"]
-          if order.shipping_address.address1 == params["shipping_address"]["address1"] and
-          order.shipping_address.address2.partition(' ').last == params["shipping_address"]["address2"].partition(' ').last and
-          order.shipping_address.city == params["shipping_address"]["city"] and
+          order_address1 = order.shipping_address.address1.squeeze(" ").downcase
+          params_address1 = params["shipping_address"]["address1"].squeeze(" ").downcase
+
+          street_abbreviations = { "avenue" => "ave", "boulevard" => "blvd", "circle" => "cir", "court" => "ct", "drive" => "dr", "expressway" => "expy","freeway" => "fwy", "lane" => "ln", "parkway" => "pky", "road" => "rd", "square" => "sq","street" => "st", "turnpike" => "tpke", "north" => "n", "east" => "e", "south" => "s","west" => "w", "northeast" => "ne", "southeast" => "se", "southwest" => "sw", "northwest" => "nw" }
+
+          order_address1 = order_address1.gsub /avenue|boulevard|circle|court|drive|expressway|freeway|lane|parkway|road|square|street|turnpike|north|east|south|west|northeast|southeast|southwest|northwest/ do |match|
+            street_abbreviations[match.to_s]
+          end
+
+          params_address1 = params_address1.gsub /avenue|boulevard|circle|court|drive|expressway|freeway|lane|parkway|road|square|street|turnpike|north|east|south|west|northeast|southeast|southwest|northwest/ do |match|
+            street_abbreviations[match.to_s]
+          end
+
+          if order_address1 == params_address1 and
+          order.shipping_address.address2.partition(' ').last.downcase == params["shipping_address"]["address2"].squeeze(" ").partition(' ').last.downcase and
+          order.shipping_address.city.downcase == params["shipping_address"]["city"].downcase and
           order.shipping_address.zip == params["shipping_address"]["zip"] and
           order.shipping_address.province == params["shipping_address"]["province"] and
           order.shipping_address.country == params["shipping_address"]["country"]
