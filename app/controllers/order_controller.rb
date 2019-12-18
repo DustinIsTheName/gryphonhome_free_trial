@@ -29,9 +29,12 @@ class OrderController < ApplicationController
 
     if address_found
       puts Colorize.red("Is a Duplicate, cancel it")
-
-      order = ShopifyAPI::Order.find params["id"]
-      order.cancel
+      begin
+        order = ShopifyAPI::Order.find params["id"]
+        order.cancel
+      rescue
+        puts Colorize.red("Product not found")
+      end
     else
       puts Colorize.green("Is valid, all good!")
     end
@@ -40,7 +43,6 @@ class OrderController < ApplicationController
   end
 
   def home
-
   end
 
   private
