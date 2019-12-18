@@ -11,5 +11,8 @@ module GryphonhomeFreeTrial
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
+
+    ShopifyAPI::Base.api_version = ShopifyAPI::Meta.admin_versions.find(&:latest_supported).handle
+    ShopifyAPI::Base.site = "https://#{ENV["SHOPIFY_API_KEY"]}:#{ENV["SHOPIFY_PASSWORD"]}@#{ENV["SHOPIFY_URL"]}/admin"
   end
 end
