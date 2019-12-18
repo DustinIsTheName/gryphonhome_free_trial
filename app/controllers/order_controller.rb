@@ -21,7 +21,7 @@ class OrderController < ApplicationController
       total_orders = ShopifyAPI::Order.count(status: 'any')
       total_pages = (total_orders/250.0).ceil
 
-      orders = ShopifyAPI::Order.find(:all, params: {limit: 250, status: 'any'})  
+      orders = ShopifyAPI::Order.find(:all, params: {limit: 250, status: 'any'})
       address_found = compare_to_orders(orders)
     else
       puts Colorize.green("Not a Trial Product")
@@ -47,12 +47,17 @@ class OrderController < ApplicationController
 
     def loop_orders(orders)
       for order in orders
-        if order.shipping_address.address1 == params["shipping_address"]["address1"] and
-        order.shipping_address.city == params["shipping_address"]["city"] and
-        order.shipping_address.zip == params["shipping_address"]["zip"] and
-        order.shipping_address.province == params["shipping_address"]["province"] and
-        order.shipping_address.country == params["shipping_address"]["country"]
-          return true
+        unless order.id == params["id"]
+          if order.shipping_address.address1 == params["shipping_address"]["address1"] and
+          order.shipping_address.address2.partition(' ') == params["shipping_address"]["address2"].partition(' ') and
+          order.shipping_address.city == params["shipping_address"]["city"] and
+          order.shipping_address.zip == params["shipping_address"]["zip"] and
+          order.shipping_address.province == params["shipping_address"]["province"] and
+          order.shipping_address.country == params["shipping_address"]["country"]
+            puts Colorize.magenta(order.id)
+
+            return true
+          end
         end
       end
 
@@ -72,9 +77,6 @@ class OrderController < ApplicationController
 
       return false
     end
-
-
-
 
 
 end
