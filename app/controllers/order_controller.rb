@@ -49,7 +49,7 @@ class OrderController < ApplicationController
       for order in orders
         unless order.id == params["id"]
           if order.shipping_address.address1 == params["shipping_address"]["address1"] and
-          order.shipping_address.address2.partition(' ') == params["shipping_address"]["address2"].partition(' ') and
+          order.shipping_address.address2.partition(' ').last == params["shipping_address"]["address2"].partition(' ').last and
           order.shipping_address.city == params["shipping_address"]["city"] and
           order.shipping_address.zip == params["shipping_address"]["zip"] and
           order.shipping_address.province == params["shipping_address"]["province"] and
