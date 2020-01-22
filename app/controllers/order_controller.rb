@@ -31,7 +31,12 @@ class OrderController < ApplicationController
       puts Colorize.red("Is a Duplicate, cancel it")
       begin
         order = ShopifyAPI::Order.find params["id"]
-        order.cancel
+        total_price = order.total_price
+        order.cancel({
+          amount: total_price,
+          email: true,
+          restock: true
+        })
       rescue
         puts Colorize.red("Product not found")
       end
